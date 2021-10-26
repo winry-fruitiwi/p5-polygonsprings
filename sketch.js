@@ -24,12 +24,7 @@ patterns used
             p.applyForce(springForce(p, other, RL=150, K=0.05))
 
 TODO
-    🌟 limit velocity
-    add mouseClicked to set particles[0]'s pos
-    compare to x-parasite!
-    figure out why things stick to the floor
-    🌟 add this.r to edges()
-    add 3D?
+    add 3D
  */
 
 let font
@@ -45,32 +40,62 @@ function setup() {
     createCanvas(640, 360)
     colorMode(HSB, 360, 100, 100, 100)
 
-    console.log("🐳 particles created :3")
+    for (let i = 0; i < 100; i++) {
+        particles.push(new Particle(random(width), random(height), 0.99))
+    }
 }
 
 function draw() {
     background(209, 80, 30)
     stroke(0, 0, 100, 70)
+
+    for (let p of particles) {
+        p.show()
+        p.update()
+        p.dampen()
+        p.applyGravity()
+    }
 }
 
 class Particle {
-    constructor(x, y) {
-        // create all the instance variables. TODO: Add damp variable?
+    constructor(x, y, damp) {
+        // TODO: Add velLimit variable?
+        this.pos = new p5.Vector(x, y)
+        this.vel = new p5.Vector
+        this.acc = new p5.Vector()
+
+        // the factor used to dampen the particle's velocity.
+        this.damp = damp
     }
 
     // updates the particle's position, velocity, and acceleration
     update() {
-        // operate on position
+        this.pos.add(this.vel)
+        this.vel.add(this.acc)
+        this.acc.mult(0)
     }
 
-    // applies a force to the particle
+    // applies a force to the particle using Newton's Second Law of Physics
     applyForce(force) {
-        // explain Newton's law, apply the force
+        // By Newton's Second Law, we can state that F = ma. m = 1 so F = a.
+        this.acc.add(force)
     }
 
     // technically this is scaleVelocity, but it puts a dampening factor on
     // the particle's velocity (or this.vel)
     dampen() {
+        this.vel.mult(this.damp)
+    }
 
+    // renders the particle
+    show() {
+        fill(0, 0, 100, 40)
+        noStroke()
+        circle(this.pos.x, this.pos.y, 10)
+    }
+
+    // applies the force of gravity to the particle
+    applyGravity() {
+        this.applyForce(new p5.Vector(0, 0.1))
     }
 }
