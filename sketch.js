@@ -49,6 +49,28 @@ function setup() {
 }
 
 function draw() {
-    background(234, 34, 24)
+    background(209, 80, 30)
     stroke(0, 0, 100, 70)
+}
+
+class Particle {
+    constructor(x, y) {
+        // create all the instance variables. TODO: Add damp variable?
+    }
+
+    // updates the particle's position, velocity, and acceleration
+    update() {
+        // operate on position
+    }
+
+    // applies a force to the particle
+    applyForce(force) {
+        // explain Newton's law, apply the force
+    }
+
+    // technically this is scaleVelocity, but it puts a dampening factor on
+    // the particle's velocity (or this.vel)
+    dampen() {
+
+    }
 }
