@@ -9,8 +9,8 @@ patterns used
     gravityForce method
 
 🔧 step by step 🔧
-    particle class inside sketch.js
-    particles with applyForce, update, render, dampen (scaleVelocity)
+.   particle class inside sketch.js
+.   particles with applyForce, update, render, dampen (scaleVelocity)
         test generating random particles across the screen with initial y
         velocity ➜ apply gravity
     edges() without this.r. if/else
@@ -40,8 +40,8 @@ function setup() {
     createCanvas(640, 360)
     colorMode(HSB, 360, 100, 100, 100)
 
-    for (let i = 0; i < 100; i++) {
-        particles.push(new Particle(random(width), random(height), 0.99))
+    for (let i = 0; i < 10; i++) {
+        particles.push(new Particle(random(width), random(height-20), 0.99))
     }
 }
 
@@ -51,6 +51,7 @@ function draw() {
 
     for (let p of particles) {
         p.show()
+        p.edges()
         p.update()
         p.dampen()
         p.applyGravity()
@@ -61,7 +62,7 @@ class Particle {
     constructor(x, y, damp) {
         // TODO: Add velLimit variable?
         this.pos = new p5.Vector(x, y)
-        this.vel = new p5.Vector
+        this.vel = p5.Vector.random2D()
         this.acc = new p5.Vector()
 
         // the factor used to dampen the particle's velocity.
@@ -97,5 +98,32 @@ class Particle {
     // applies the force of gravity to the particle
     applyGravity() {
         this.applyForce(new p5.Vector(0, 0.1))
+    }
+
+    // makes the particle rebound when it hits an edge. Get ready for a storm!
+    edges() {
+        // right side
+        if (this.pos.x > width) {
+            this.pos.x = width
+            this.vel.x *= -1
+        }
+
+        // left side
+        else if (this.pos.x < 0) {
+            this.pos.x = 0
+            this.vel.x *= -1
+        }
+
+        // top side
+        else if (this.pos.y > height) {
+            this.pos.y = height
+            this.vel.y *= -1
+        }
+
+        // bottom side
+        else if (this.pos.y < 0) {
+            this.pos.y = 0
+            this.vel.y *= -1
+        }
     }
 }
