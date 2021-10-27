@@ -1,6 +1,6 @@
 /*
 @author Winry
-@date 2021-10-26
+@date 2021-10-27
 
 Trying to recreate Simon's polygon spring demo, but with comments
 
@@ -8,9 +8,11 @@ patterns used
     loop all, then loop other
     gravityForce method
 
+empty means incomplete/not started, . means complete, s means skipped
+
 🔧 step by step 🔧
-.   particle class inside sketch.js
-.   particles with applyForce, update, render, dampen (scaleVelocity)
+    particle class inside sketch.js
+    particles with applyForce, update, render, dampen (scaleVelocity)
         test generating random particles across the screen with initial y
         velocity ➜ apply gravity
     edges() without this.r. if/else
@@ -31,6 +33,7 @@ let font
 let particles = []
 const TOTAL = 6
 const K = 0.05
+const R = 42
 
 function preload() {
     font = loadFont('fonts/Meiryo-01.ttf')
@@ -40,90 +43,6 @@ function setup() {
     createCanvas(640, 360)
     colorMode(HSB, 360, 100, 100, 100)
 
-    for (let i = 0; i < 10; i++) {
-        particles.push(new Particle(random(width), random(height-20), 0.99))
-    }
-}
 
-function draw() {
-    background(209, 80, 30)
-    stroke(0, 0, 100, 70)
-
-    for (let p of particles) {
-        p.show()
-        p.edges()
-        p.update()
-        p.dampen()
-        p.applyGravity()
-    }
-}
-
-class Particle {
-    constructor(x, y, damp) {
-        // TODO: Add velLimit variable?
-        this.pos = new p5.Vector(x, y)
-        this.vel = p5.Vector.random2D()
-        this.acc = new p5.Vector()
-
-        // the factor used to dampen the particle's velocity.
-        this.damp = damp
-    }
-
-    // updates the particle's position, velocity, and acceleration
-    update() {
-        this.pos.add(this.vel)
-        this.vel.add(this.acc)
-        this.acc.mult(0)
-    }
-
-    // applies a force to the particle using Newton's Second Law of Physics
-    applyForce(force) {
-        // By Newton's Second Law, we can state that F = ma. m = 1 so F = a.
-        this.acc.add(force)
-    }
-
-    // technically this is scaleVelocity, but it puts a dampening factor on
-    // the particle's velocity (or this.vel)
-    dampen() {
-        this.vel.mult(this.damp)
-    }
-
-    // renders the particle
-    show() {
-        fill(0, 0, 100, 40)
-        noStroke()
-        circle(this.pos.x, this.pos.y, 10)
-    }
-
-    // applies the force of gravity to the particle
-    applyGravity() {
-        this.applyForce(new p5.Vector(0, 0.1))
-    }
-
-    // makes the particle rebound when it hits an edge. Get ready for a storm!
-    edges() {
-        // right side
-        if (this.pos.x > width) {
-            this.pos.x = width
-            this.vel.x *= -1
-        }
-
-        // left side
-        else if (this.pos.x < 0) {
-            this.pos.x = 0
-            this.vel.x *= -1
-        }
-
-        // top side
-        else if (this.pos.y > height) {
-            this.pos.y = height
-            this.vel.y *= -1
-        }
-
-        // bottom side
-        else if (this.pos.y < 0) {
-            this.pos.y = 0
-            this.vel.y *= -1
-        }
-    }
+    console.log("🐳 particles created :3")
 }
