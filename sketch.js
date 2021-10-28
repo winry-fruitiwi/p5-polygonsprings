@@ -31,8 +31,8 @@ TODO
 
 let font
 let particles = []
-const TOTAL = 6
-const K = 0.05
+const TOTAL = 5
+const K = 0.01
 const R = 42
 
 function preload() {
@@ -63,23 +63,40 @@ function draw() {
     stroke(0, 0, 100, 70)
 
     for (let p of particles) {
-        p.edges()
-        // p.update()
-        p.show()
-        p.applyGravity()
-        p.dampen()
-
         // connect other particles with springs
         for (let other of particles) {
             if (other !== p) {
                 stroke(0, 0, 100)
                 strokeWeight(1)
+                p.applyForce(springForce(p, other, K, 150))
                 line(p.pos.x, p.pos.y, other.pos.x, other.pos.y)
             }
         }
     }
+
+    for (let p of particles) {
+        p.edges()
+        p.update()
+        p.show()
+        p.applyGravity()
+        p.dampen()
+    }
 }
 
+// applies the force of a spring to a particle
+function springForce(a, b, k, rest_length) {
+    // we first need the vector from a to b
+    let force = p5.Vector.sub(a.pos, b.pos)
+    // now we can find displacement, x
+    let x = force.mag() - rest_length
+    force.normalize()
+
+    // we multiply the force by the displacement * k
+    force.mult(-k)
+    force.mult(x)
+
+    return force
+}
 
 class Particle {
     constructor(x, y, damp) {
@@ -100,6 +117,7 @@ class Particle {
         this.pos.add(this.vel)
         this.vel.add(this.acc)
         this.acc.mult(0)
+        this.vel.limit(12)
     }
 
     // uses Newton's Second Law of Physics to apply a force to a particle
