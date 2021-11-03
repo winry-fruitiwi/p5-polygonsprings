@@ -31,8 +31,8 @@ TODO
 
 let font
 let particles = []
-const TOTAL = 5
-const K = 0.01
+const TOTAL = 6
+const K = 0.05
 const R = 42
 
 function preload() {
@@ -140,13 +140,13 @@ class Particle {
 
     // applies the force of gravity to this
     applyGravity() {
-        this.applyForce(new p5.Vector(0, 0.1))
+        this.applyForce(new p5.Vector(0, 0.3))
     }
 
     // bounces the particle at the edge of the canvas. Later I might do this
     // in 3D, but to keep things simple I'll start at 2D.
     edges() {
-        // left side
+        // right side
         if (this.pos.x > width) {
             this.pos.x = width
             this.vel.x *= -1
@@ -156,12 +156,12 @@ class Particle {
             this.pos.x = 0
             this.vel.x *= -1
         }
-        // left side
+        // bottom side
         else if (this.pos.y > height) {
             this.pos.y = height
-            this.vel.y *= -1
+            this.vel.y *= -1.5
         }
-        // left side
+        // top side
         else if (this.pos.y < 0) {
             this.pos.y = 0
             this.vel.y *= -1
