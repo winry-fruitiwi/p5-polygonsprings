@@ -52,7 +52,7 @@ function setup() {
         let angle = map(i, 0, TOTAL, 0, TAU)
         let x = R * cos(angle) + width/2
         let y = R * sin(angle) + height/2
-        particles.push(new Particle(x, y, 1))
+        particles.push(new Particle(x, y, 0.99))
     }
 
     console.log("🐳 particles created :3")
@@ -75,9 +75,9 @@ function draw() {
     }
 
     for (let p of particles) {
+        p.show()
         p.edges()
         p.update()
-        p.show()
         p.applyGravity()
         p.dampen()
     }
@@ -165,6 +165,76 @@ class Particle {
         else if (this.pos.y < 0) {
             this.pos.y = 0
             this.vel.y *= -1
+        }
+    }
+}
+
+class BurstParticle extends Particle {
+    constructor(x, y) {
+        super(x, y, 1)
+
+        // counts down the number of frames remaining for the particle on
+        // the field :(
+        this.lifetime = 100
+    }
+
+    // boolean: if the particle can leave Particular Earth, return true
+    isExpired() {
+        return this.lifetime <= 0
+    }
+
+    update() {
+        this.pos.add(this.vel)
+        this.vel.add(this.acc)
+        this.acc.mult(0)
+        this.vel.limit(12)
+        this.lifetime -= 2
+    }
+
+    // render the particle
+    show() {
+        noStroke()
+        fill(0, 0, 100, this.lifetime)
+        circle(this.pos.x, this.pos.y, this.r*2)
+    }
+}
+
+class Emitter {
+    constructor(x, y) {
+        this.pos = new p5.Vector(x, y)
+
+        // emitters also have to disappear. It's not like a fiery particle
+        // lasts forever but a firework does.
+        this.lifetime = 100
+
+        // keeps track of all the particles this emitter has
+        this.particles = []
+    }
+
+    isExpired() {
+        return this.lifetime <= 0
+    }
+
+    update() {
+        this.lifetime -= 1
+        for (let i = 0; i < this.particles.length; i++) {
+            let p = this.particles[i]
+            if (p.isExpired()) {
+                this.particles.splice(i, i)
+            }
+        }
+
+        for (let i = 0; i < this.particles.length; i++) {
+            let p = this.particles[i]
+            p.applyForce(new p5.Vector(0, 0.3))
+            p.edges()
+            p.update()
+        }
+    }
+
+    show() {
+        for (let p of this.particles) {
+            p.show()
         }
     }
 }
